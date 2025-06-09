@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: rgb(185, 176, 236);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+
+        .erro {
+            color: red;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>🌦️ Previsão de tempo </h1>
+        <input type="text" id="cidade" placeholder="Digite o nome da cidade" />
+        <button onclick="consultarClima()">Buscar</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function consultarClima() {
+            const cidade = document.getElementById('cidade').value;
+            const resultadoDiv = document.getElementById('resultado');
+
+            if (!cidade) {
+                resultadoDiv.innerHTML = '<p class="erro">Por favor, digite uma cidade!</p>';
+                return;
+            }
+
+            // SUA CHAVE DA API OPENWEATHERMAP (obtenha em: https://openweathermap.org/api)
+            const API_KEY = 'c8c68a64aeea0c2129e609225f2705c1';
+            const URL = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&units=metric&lang=pt_br&appid=${API_KEY}`;
+
+            resultadoDiv.innerHTML = '<p>Carregando...</p>';
+
+            fetch(URL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Cidade não encontrada!');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const temperatura = data.main.temp;
+                    const descricao = data.weather[0].description;
+                    resultadoDiv.innerHTML = `
+                <p><strong>${cidade}</strong></p>
+                <p>🌡️ Temperatura: ${temperatura}°C</p>
+                <p>☁️ Condição: ${descricao}</p>
+            `;
+                })
+                .catch(error => {
+                    resultadoDiv.innerHTML = `<p class="erro">Erro: ${error.message}</p>`;
+                });
+        }
+
+        const URL = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&units=metric&lang=pt_br&appid=TESTE`;
+    </script>
+</body>
+
+</html>
